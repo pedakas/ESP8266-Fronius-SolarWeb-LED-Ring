@@ -39,19 +39,29 @@ Es werden nur **drei Leitungen** benötigt:
 |---|---|
 | 5V | 5V |
 | GND | GND / 5VGND |
-| D4 | DIN (optional über 330–470 Ω) |
+| D4 | RXD (optional über 330–470 Ω) |
 
 ```mermaid
 flowchart LR
     NETZ[USB-Netzteil 5V] -->|Micro-USB| D1[Wemos D1 Mini]
     D1 -->|5V| XR[X-Ring 12x WS2812B]
     D1 -->|GND| XR
-    D1 -->|D4 zu DIN| XR
+    D1 -->|D4 zu RXD-Pad| XR
+    DIP[DIP-Schalter 7 / RXD auf ON] -.->|waehlt den Daten-Pin| XR
 ```
+
+### ⚠️ Der DIP-Schalter (wichtigster Punkt)
+
+Der X-Ring hat **mittig einen 8-fach-DIP-Schalter**, über den festgelegt wird, welchen Pin die LED-Datenleitung (One-Wire) bekommt. Ohne die richtige Schalterstellung bleibt der Ring dunkel! ([Quelle: no3x.de – X-Ring missing documentation](https://no3x.de/projects/x-ring/x-ring-missing-documentation))
+
+- **Genau ein** Schalter muss auf ON stehen – derjenige, dessen Pad du für die Datenleitung benutzt (im Beispiel oben: Schalter **7 / RXD**).
+- Die Pin-Beschriftungen am X-Ring (RST, TXD, RXD, D3–D8 …) gehören zum Board, für das der Ring konzipiert war. Für den D1 Mini sind sie bis auf **5V und GND irrelevant**.
+- Welchen GPIO du auf der D1-Mini-Seite nimmst (D4, D2 …), ist frei wählbar – er muss nur mit `LED_PIN` im Sketch übereinstimmen. Der DIP-Schalter wählt nur den Ring-seitigen Pad aus.
+- Der X-Ring ist **nicht mechanisch kompatibel** zum D1 Mini (Rastermaß passt nicht) – Verbindung also per Jumper-Kabel, wie hier beschrieben.
 
 **Hinweise:**
 
-- Der D1 Mini wird per USB versorgt und speist den Ring über den 5V-Pin. 12 LEDs bei Helligkeit 50 ziehen das problemlos.
+- Der D1 Mini wird per USB versorgt und speist den Ring über den 5V-Pin. 12 LEDs bei Helligkeit 50 ziehen das problemlos (max. 0,72 A bei voller weißer Ausleuchtung).
 - Datenleitung kurz halten (< 30 cm) und gemeinsamen GND-Bezugspunkt verwenden.
 - **D4 = GPIO2** ist der Pin der Onboard-LED und muss beim Boot HIGH sein. Das funktioniert mit WS2812B (hochohmiger Eingang), aber die erste LED kann beim Einschalten kurz aufflackern – das ist harmlos. Wer das vermeiden will, nutzt D2, D1, D5 oder D7 und passt `LED_PIN` im Sketch an.
 - Falls der Ring dauerhaft flackert: 3,3 V Datenpegel an 5 V-LEDs ist grenzwertig. Abhilfe schafft ein Level-Shifter (74AHCT125) oder die Speisung des Rings mit ca. 4,3 V.
@@ -149,7 +159,7 @@ Beispielantwort (gekürzt):
 
 | Problem | Lösung |
 |---|---|
-| Ring bleibt dunkel | Verkabelung prüfen (häufigster Fehler: 5V/GND vertauscht), 5V am Ring messen |
+| Ring bleibt dunkel | DIP-Schalter prüfen: genau ein Schalter ON, passend zum Pad der Datenleitung! Danach Verkabelung prüfen (häufigster Fehler: 5V/GND vertauscht), 5V am Ring messen |
 | Eine rote LED leuchtet | WLAN-Daten/Token prüfen, Seriellen Monitor anschauen |
 | Farben passen nicht (R/B vertauscht) | Im Sketch `NEO_GRB` gegen `NEO_RGB` tauschen |
 | Erste LED blitzt beim Einschalten auf | Normal bei D4/GPIO2 (Boot-Pegel), harmlos |

@@ -5,7 +5,10 @@
  * Verkabelung:
  *   D1 Mini 5V  -> X-Ring 5V
  *   D1 Mini GND -> X-Ring GND / 5VGND
- *   D1 Mini D4  -> X-Ring DIN (optional 330-470 Ohm)
+ *   D1 Mini D4  -> X-Ring RXD-Pad (optional 330-470 Ohm)
+ *   WICHTIG: DIP-Schalter 7 (RXD) auf ON stellen - nur EIN Schalter!
+ *   (Der DIP-Schalter waehlt, welchen Pad die LED-Datenleitung bekommt.
+ *    Siehe https://no3x.de/projects/x-ring/x-ring-missing-documentation)
  *
  * Funktion:
  *   - Ruft alle 4 Minuten die Solar.web Public-Display-API ab
