@@ -154,6 +154,7 @@ Beispielantwort (gekürzt):
 | Farben passen nicht (R/B vertauscht) | Im Sketch `NEO_GRB` gegen `NEO_RGB` tauschen |
 | Erste LED blitzt beim Einschalten auf | Normal bei D4/GPIO2 (Boot-Pegel), harmlos |
 | Ring flackert dauerhaft | Datenleitung kürzen oder Level-Shifter (74AHCT125) verwenden |
+| Kompilierfehler: `Dusk2Dawn ... cannot declare member function ... to have static linkage` | Bekannter Bug der Dusk2Dawn-Bibliothek mit neueren Compilern. In `Dokumente\Arduino\libraries\Dusk2Dawn\Dusk2Dawn.cpp` das Wort `static` in den beiden Funktions-Definitionen (`min2str`, `zeroPadTime`) löschen, IDE neu starten |
 
 ---
 
