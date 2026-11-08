@@ -127,7 +127,14 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 
 ## 📶 Updates per OTA (kabellos)
 
-Nach dem ersten USB-Flash erscheint das Gerät als **„Solar-Ampel“** in der IDE unter **Werkzeuge → Port** (Abschnitt Netzwerk-Ports). Alle weiteren Updates laufen dann über WLAN – ganz ohne Kabel.
+**Variante 1 – Arduino IDE:** Nach dem ersten USB-Flash erscheint das Gerät als **„Solar-Ampel“** in der IDE unter **Werkzeuge → Port** (Abschnitt Netzwerk-Ports). Updates laufen dann direkt aus der IDE über WLAN.
+
+**Variante 2 – Browser (Web-OTA):** Der Sketch bietet zusätzlich eine Update-Seite an, die parallel zur IDE-Variante läuft:
+
+1. `http://solar-ampel.local/update` im Browser öffnen (alternativ die IP des Geräts, im Router nachschauen)
+2. Mit Benutzer/Passwort aus dem Sketch anmelden (`otaWebUser` / `otaWebPassword` – **bitte ändern!**)
+3. In der Arduino IDE: **Sketch → Binärdatei exportieren (Export Compiled Binary)** – die erzeugte `.bin`-Datei auf der Update-Seite auswählen und hochladen
+4. Das Gerät flasht sich selbst, startet neu und läuft mit der neuen Firmware weiter
 
 ---
 

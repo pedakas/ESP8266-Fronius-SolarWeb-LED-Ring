@@ -30,12 +30,19 @@
 #include <Dusk2Dawn.h> 
 #include <Adafruit_NeoPixel.h> 
 #include <ArduinoOTA.h> 
+#include <ESP8266WebServer.h>        // Web-OTA: Update-Seite im Browser
+#include <ESP8266HTTPUpdateServer.h>  // Web-OTA: Firmware-Upload per HTTP
 
 // ==========================================
 // BITTE HIER DEINE DATEN EINTRAGEN
 // ==========================================
 const char* ssid = "DEIN_WLAN_NAME";
 const char* password = "DEIN_WLAN_PASSWORT";
+
+// Zugangsdaten fuer die Web-OTA-Seite (http://solar-ampel.local/update)
+// BITTE UNBEDINGT AENDERN, sonst kann jeder im Netzwerk flashen!
+const char* otaWebUser = "admin";
+const char* otaWebPassword = "BITTE_AENDERN";
 
 const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDataForPublicDisplay?PublicDisplayToken=DEIN_TOKEN";
 
@@ -64,6 +71,10 @@ const int   daylightOffset_sec = 3600;
 unsigned long lastTime = 0;
 const unsigned long timerDelay = 240000; // 4 Minuten
 
+// Web-OTA (lauft parallel zum klassischen ArduinoOTA)
+ESP8266WebServer httpServer(80);
+ESP8266HTTPUpdateServer httpUpdater;
+
 void setup() {
   Serial.begin(115200);
   
@@ -87,6 +98,11 @@ void setup() {
   ArduinoOTA.setHostname("Solar-Ampel"); 
   ArduinoOTA.begin();
   
+  // Web-OTA: Update-Seite unter http://solar-ampel.local/update
+  // (Basic-Auth mit den Zugangsdaten oben; MDNS laeuft ueber ArduinoOTA)
+  httpUpdater.setup(&httpServer, "/update", otaWebUser, otaWebPassword);
+  httpServer.begin();
+  
   ring.clear();
   ring.show();
   
@@ -97,6 +113,7 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
+  httpServer.handleClient();   // Web-OTA: Browser-Anfragen bedienen
   
   if ((millis() - lastTime) > timerDelay) {
     if (isDaytime()) {
