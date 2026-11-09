@@ -113,7 +113,7 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 
 - **PublicDisplayToken:** In [solarweb.com](https://www.solarweb.com) dein PV-System öffnen und die **öffentliche Anzeige (Public Display)** aktivieren. Der freigegebene Link enthält den `PublicDisplayToken` – nur dieser Token, keine Login-Daten, wird für die API genutzt.
 - **Standort:** `latitude`/`longitude` des Anlagenstandorts (z. B. aus Google Maps: rechter Klick → Koordinaten kopieren).
-- **Zeitzone:** `timeZone` als **Standardzeit ohne Sommerzeit** eintragen (Österreich/Deutschland: `1`).
+- **Zeitzone:** `timeZone` als **Standardzeit ohne Sommerzeit** eintragen (Österreich/Deutschland: `1`). Für die Uhrzeit selbst sorgt `TZ_RULE` (Mitteleuropa mit automatischer Sommerzeitumstellung) – für andere Regionen den POSIX-TZ-String aus der [POSIX-TZ-Datenbank](https://github.com/nayarsystems/posix_tz_db) eintragen.
 - **Ausrichtung:** `LED_OFFSET` dreht den Startpunkt der Prozentanzeige (Wert 0–11), falls die erste LED des Rings an einer ungünstigen Stelle sitzt. `0` = Start bei der physisch ersten LED (direkt am Daten-Eingang).
 - **Farbreihenfolge:** `LED_COLOR_ORDER` ist standardmäßig `NEO_GRB` (WS2812B-Standard). Zeigt der Ring Rot statt Grün, auf `NEO_RGB` ändern (manche Ringe sind intern anders verkabelt).
 
@@ -170,6 +170,7 @@ Beispielantwort (gekürzt):
 |---|---|
 | Ring bleibt dunkel | DIP-Schalter prüfen: genau ein Schalter ON, passend zum Pad der Datenleitung! Danach Verkabelung prüfen (häufigster Fehler: 5V/GND vertauscht), 5V am Ring messen |
 | Ring dunkel, obwohl Tag und Verkabelung ok | SolarWeb hat SOC/P_Grid als null geliefert (passiert z. B. beim Umschalten nahe 100 % Batterieladung). Der Sketch zeigt das als rote Fehler-LED; beim nächsten gültigen Abruf kommt die Anzeige zurück |
+| Ring geht zu früh am Abend aus / Uhr geht eine Stunde vor | Alte Versionen nutzten `configTime` mit zwei festen Offsets (dauerhaft UTC+2, im Winter eine Stunde zu schnell). Neu: Sommerzeit wird automatisch über `TZ_RULE` umgestellt |
 | Eine rote LED leuchtet | WLAN-Daten/Token prüfen, Seriellen Monitor anschauen |
 | Farben passen nicht (Rot und Grün vertauscht, z. B. zeigt der Ring Rot statt Grün) | `LED_COLOR_ORDER` im Sketch auf `NEO_RGB` ändern (manche Ringe sind intern RGB statt GRB verkabelt) |
 | Erste LED blitzt beim Einschalten auf | Normal bei D4/GPIO2 (Boot-Pegel), harmlos |

@@ -67,8 +67,9 @@ Dusk2Dawn standort(latitude, longitude, timeZone);
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, LED_COLOR_ORDER + NEO_KHZ800);
 
 const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec = 3600;
-const int   daylightOffset_sec = 3600;
+// Zeitzonenregel Mitteleuropa inkl. AUTOMATISCHER Sommerzeitumstellung
+// (siehe https://github.com/nayarsystems/posix_tz_db)
+const char* TZ_RULE = "CET-1CEST,M3.5.0/02,M10.5.0/03";
 
 unsigned long lastTime = 0;
 const unsigned long timerDelay = 240000; // 4 Minuten
@@ -101,7 +102,12 @@ void setup() {
     delay(200);
   }
   
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  // Zeit per NTP holen. WICHTIG: Sommerzeit automatisch ueber TZ_RULE.
+  // (Die alte Variante mit zwei festen Offsets lief im Winter genau
+  //  eine Stunde vor, dadurch schaltete die Ampel zu frueh auf Nacht.)
+  setenv("TZ", TZ_RULE, 1);
+  tzset();
+  configTime(ntpServer);
   
   ArduinoOTA.setHostname("solarpuls"); 
   ArduinoOTA.begin();
