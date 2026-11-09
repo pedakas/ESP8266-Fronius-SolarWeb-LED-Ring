@@ -1,6 +1,6 @@
 # 🔆 SolarPuls – Fronius SolarWeb Anzeige mit ESP8266 & WS2812B LED-Ring
 
-Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die Live-Daten deiner PV-Anlage von der **Fronius Solar.web Public-Display-API** und zeigt sie auf einem **12er WS2812B LED-Ring (X-Ring)** an. Tagsüber leuchtet die Ampel, nachts schaltet sie sich automatisch ab (Sonnenauf-/untergang ± 30 Minuten). Updates laufen nach dem ersten Flashen kabellos per OTA.
+Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die Live-Daten deiner PV-Anlage von der **Fronius Solar.web Public-Display-API** und zeigt sie auf einem **12er WS2812B LED-Ring (X-Ring)** an. Tagsüber leuchtet die Ampel, nachts schaltet sie sich automatisch ab (standardmäßig mit Sonnenuntergang; Offsets im Sketch einstellbar). Updates laufen nach dem ersten Flashen kabellos per OTA.
 
 ---
 
@@ -13,7 +13,7 @@ Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die
 | 🟧 LEDs orange | Batterieladestand, Bereich 31–70 % |
 | 🟥 LEDs rot | Batterieladestand ≤ 30 % |
 | 🟥 Eine einzelne LED | Fehler: kein WLAN, API-/JSON-Fehler oder unvollständige Daten (z. B. SolarWeb liefert SOC als null) – bleibt bis zum nächsten erfolgreichen Abruf |
-| ⬛ Aus | Nachts (Sonnenaufgang −30 min bis Sonnenuntergang +30 min) |
+| ⬛ Aus | Nachts: von `MORGEN_OFFSET_MIN` vor Sonnenaufgang bis `ABEND_OFFSET_MIN` nach Sonnenuntergang (Standard: aus mit Sonnenuntergang) |
 
 Beim Start rotiert eine blaue LED, bis die WLAN-Verbindung steht.
 
@@ -114,6 +114,7 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 - **PublicDisplayToken:** In [solarweb.com](https://www.solarweb.com) dein PV-System öffnen und die **öffentliche Anzeige (Public Display)** aktivieren. Der freigegebene Link enthält den `PublicDisplayToken` – nur dieser Token, keine Login-Daten, wird für die API genutzt.
 - **Standort:** `latitude`/`longitude` des Anlagenstandorts (z. B. aus Google Maps: rechter Klick → Koordinaten kopieren).
 - **Zeitzone:** `timeZone` als **Standardzeit ohne Sommerzeit** eintragen (Österreich/Deutschland: `1`). Für die Uhrzeit selbst sorgt `TZ_RULE` (Mitteleuropa mit automatischer Sommerzeitumstellung) – für andere Regionen den POSIX-TZ-String aus der [POSIX-TZ-Datenbank](https://github.com/nayarsystems/posix_tz_db) eintragen.
+- **Anzeige-Zeiten:** `MORGEN_OFFSET_MIN` = Minuten vor Sonnenaufgang einschalten, `ABEND_OFFSET_MIN` = Minuten nach Sonnenuntergang ausschalten. `0` = exakt mit dem Sonnenereignis.
 - **Ausrichtung:** `LED_OFFSET` dreht den Startpunkt der Prozentanzeige (Wert 0–11), falls die erste LED des Rings an einer ungünstigen Stelle sitzt. `0` = Start bei der physisch ersten LED (direkt am Daten-Eingang).
 - **Farbreihenfolge:** `LED_COLOR_ORDER` ist standardmäßig `NEO_GRB` (WS2812B-Standard). Zeigt der Ring Rot statt Grün, auf `NEO_RGB` ändern (manche Ringe sind intern anders verkabelt).
 

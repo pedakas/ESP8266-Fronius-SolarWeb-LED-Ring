@@ -15,7 +15,7 @@
  *   - Gruen: >1 kW Einspeisung UND Batterie >= 98 %
  *   - Blau/Orange/Rot: Batterieladestand (jede LED ~8,3 %)
  *   - Eine rote LED: Fehler (WLAN oder API)
- *   - Nachts automatisch aus (Sonnenauf-/untergang +/- 30 min)
+ *   - Nachts automatisch aus (Offsets fuer An-/Ausschalten einstellbar)
  *   - Updates kabellos per OTA (Hostname: "solarpuls")
  *
  * Benoetigt: Adafruit NeoPixel, ArduinoJson 7.x, Dusk2Dawn
@@ -62,6 +62,10 @@ int timeZone = 1;
 #define BRIGHTNESS 50    
 #define LED_OFFSET 0     // Startpunkt der Anzeige drehen (0-11): 0 = erste LED am Daten-Eingang
 #define LED_COLOR_ORDER NEO_GRB  // NEO_GRB = Standard (WS2812B); auf NEO_RGB aendern, falls Rot/Gruen vertauscht erscheinen
+
+// Anzeige-Zeiten: Minuten relativ zum Sonnenauf-/-untergang
+#define MORGEN_OFFSET_MIN 30   // Einschalten: so viele Minuten VOR Sonnenaufgang
+#define ABEND_OFFSET_MIN 0     // Ausschalten: so viele Minuten NACH Sonnenuntergang (0 = mit Sonnenuntergang)
 
 Dusk2Dawn standort(latitude, longitude, timeZone);
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, LED_COLOR_ORDER + NEO_KHZ800);
@@ -157,8 +161,8 @@ bool isDaytime() {
   int sunsetMinutes  = standort.sunset(timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday, isDST);
   int currentMinutes = (timeinfo.tm_hour * 60) + timeinfo.tm_min;
 
-  int einschaltZeit  = sunriseMinutes - 30;
-  int ausschaltZeit  = sunsetMinutes  + 30;
+  int einschaltZeit  = sunriseMinutes - MORGEN_OFFSET_MIN;
+  int ausschaltZeit  = sunsetMinutes  + ABEND_OFFSET_MIN;
 
   return (currentMinutes >= einschaltZeit && currentMinutes <= ausschaltZeit);
 }
