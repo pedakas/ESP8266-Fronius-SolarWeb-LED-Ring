@@ -60,6 +60,7 @@ int timeZone = 1;
 #define LED_PIN D4       // D4 = GPIO2; alternativ D2, D1, D5 oder D7
 #define NUM_LEDS 12      // Der X-Ring hat 12 LEDs
 #define BRIGHTNESS 50    
+#define LED_OFFSET 0     // Startpunkt der Anzeige drehen (0-11): 0 = erste LED am Daten-Eingang
 
 Dusk2Dawn standort(latitude, longitude, timeZone);
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -75,6 +76,12 @@ const unsigned long timerDelay = 240000; // 4 Minuten
 ESP8266WebServer httpServer(80);
 ESP8266HTTPUpdateServer httpUpdater;
 
+// Pixel mit Drehung setzen: LED_OFFSET verschiebt den Startpunkt der Anzeige,
+// falls die erste LED physisch an einer unguenstigen Stelle sitzt.
+void setRingPixel(int i, uint32_t color) {
+  ring.setPixelColor((i + LED_OFFSET) % NUM_LEDS, color);
+}
+
 void setup() {
   Serial.begin(115200);
   
@@ -87,7 +94,7 @@ void setup() {
   int loadingPos = 0;
   while (WiFi.status() != WL_CONNECTED) {
     ring.clear();
-    ring.setPixelColor(loadingPos, ring.Color(0, 0, 255)); 
+    setRingPixel(loadingPos, ring.Color(0, 0, 255)); 
     ring.show();
     loadingPos = (loadingPos + 1) % NUM_LEDS;
     delay(200);
@@ -153,7 +160,7 @@ bool isDaytime() {
 // Eine rote LED = Fehler (kein WLAN oder API-/JSON-Fehler)
 void showOfflineError() {
   ring.clear();
-  ring.setPixelColor(0, ring.Color(255, 0, 0)); 
+  setRingPixel(0, ring.Color(255, 0, 0)); 
   ring.show();
 }
 
@@ -191,7 +198,7 @@ void updateLeds(float grid, float soc) {
 
   if (losGehts) {
     for(int i = 0; i < NUM_LEDS; i++) {
-      ring.setPixelColor(i, ring.Color(0, 255, 0)); 
+      setRingPixel(i, ring.Color(0, 255, 0)); 
     }
   } else {
     int activeLeds = round((soc / 100.0) * NUM_LEDS);
@@ -207,7 +214,7 @@ void updateLeds(float grid, float soc) {
     }
     
     for(int i = 0; i < activeLeds; i++) {
-      ring.setPixelColor(i, batColor); 
+      setRingPixel(i, batColor); 
     }
   }
   ring.show(); 
