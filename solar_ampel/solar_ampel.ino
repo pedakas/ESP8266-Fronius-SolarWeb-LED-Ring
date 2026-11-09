@@ -1,5 +1,5 @@
 /*
- * Solar-Ampel: Fronius SolarWeb PV-Anzeige auf einem 12er WS2812B LED-Ring
+ * SolarPuls: Fronius SolarWeb PV-Anzeige auf einem 12er WS2812B LED-Ring
  * Hardware: Wemos D1 Mini (ESP8266) + X-Ring (12x WS2812B)
  *
  * Verkabelung:
@@ -16,7 +16,7 @@
  *   - Blau/Orange/Rot: Batterieladestand (jede LED ~8,3 %)
  *   - Eine rote LED: Fehler (WLAN oder API)
  *   - Nachts automatisch aus (Sonnenauf-/untergang +/- 30 min)
- *   - Updates kabellos per OTA (Hostname: "Solar-Ampel")
+ *   - Updates kabellos per OTA (Hostname: "solarpuls")
  *
  * Benoetigt: Adafruit NeoPixel, ArduinoJson 7.x, Dusk2Dawn
  * Board: LOLIN(WEMOS) D1 R1 & mini
@@ -39,7 +39,7 @@
 const char* ssid = "DEIN_WLAN_NAME";
 const char* password = "DEIN_WLAN_PASSWORT";
 
-// Zugangsdaten fuer die Web-OTA-Seite (http://solar-ampel.local/update)
+// Zugangsdaten fuer die Web-OTA-Seite (http://solarpuls.local/update)
 // BITTE UNBEDINGT AENDERN, sonst kann jeder im Netzwerk flashen!
 const char* otaWebUser = "admin";
 const char* otaWebPassword = "BITTE_AENDERN";
@@ -95,10 +95,10 @@ void setup() {
   
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   
-  ArduinoOTA.setHostname("Solar-Ampel"); 
+  ArduinoOTA.setHostname("solarpuls"); 
   ArduinoOTA.begin();
   
-  // Web-OTA: Update-Seite unter http://solar-ampel.local/update
+  // Web-OTA: Update-Seite unter http://solarpuls.local/update
   // (Basic-Auth mit den Zugangsdaten oben; MDNS laeuft ueber ArduinoOTA)
   httpUpdater.setup(&httpServer, "/update", otaWebUser, otaWebPassword);
   httpServer.begin();

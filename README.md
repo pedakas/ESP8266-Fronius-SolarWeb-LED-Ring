@@ -1,4 +1,4 @@
-# 🔆 Solar-Ampel – Fronius SolarWeb Anzeige mit ESP8266 & WS2812B LED-Ring
+# 🔆 SolarPuls – Fronius SolarWeb Anzeige mit ESP8266 & WS2812B LED-Ring
 
 Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die Live-Daten deiner PV-Anlage von der **Fronius Solar.web Public-Display-API** und zeigt sie auf einem **12er WS2812B LED-Ring (X-Ring)** an. Tagsüber leuchtet die Ampel, nachts schaltet sie sich automatisch ab (Sonnenauf-/untergang ± 30 Minuten). Updates laufen nach dem ersten Flashen kabellos per OTA.
 
@@ -127,11 +127,11 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 
 ## 📶 Updates per OTA (kabellos)
 
-**Variante 1 – Arduino IDE:** Nach dem ersten USB-Flash erscheint das Gerät als **„Solar-Ampel“** in der IDE unter **Werkzeuge → Port** (Abschnitt Netzwerk-Ports). Updates laufen dann direkt aus der IDE über WLAN.
+**Variante 1 – Arduino IDE:** Nach dem ersten USB-Flash erscheint das Gerät als **„SolarPuls“** in der IDE unter **Werkzeuge → Port** (Abschnitt Netzwerk-Ports). Updates laufen dann direkt aus der IDE über WLAN.
 
 **Variante 2 – Browser (Web-OTA):** Der Sketch bietet zusätzlich eine Update-Seite an, die parallel zur IDE-Variante läuft:
 
-1. `http://solar-ampel.local/update` im Browser öffnen (alternativ die IP des Geräts, im Router nachschauen)
+1. `http://solarpuls.local/update` im Browser öffnen (alternativ die IP des Geräts, im Router nachschauen)
 2. Mit Benutzer/Passwort aus dem Sketch anmelden (`otaWebUser` / `otaWebPassword` – **bitte ändern!**)
 3. In der Arduino IDE: **Sketch → Binärdatei exportieren (Export Compiled Binary)** – die erzeugte `.bin`-Datei auf der Update-Seite auswählen und hochladen
 4. Das Gerät flasht sich selbst, startet neu und läuft mit der neuen Firmware weiter
