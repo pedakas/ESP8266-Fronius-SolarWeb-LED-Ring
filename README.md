@@ -12,7 +12,7 @@ Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die
 | 🟦 1–12 LEDs blau | Batterieladestand (jede LED ≈ 8,3 %), Bereich 71–100 % |
 | 🟧 LEDs orange | Batterieladestand, Bereich 31–70 % |
 | 🟥 LEDs rot | Batterieladestand ≤ 30 % |
-| 🟥 Eine einzelne LED | Fehler: kein WLAN oder API/JSON-Fehler (bleibt bis zum nächsten erfolgreichen Abruf) |
+| 🟥 Eine einzelne LED | Fehler: kein WLAN, API-/JSON-Fehler oder unvollständige Daten (z. B. SolarWeb liefert SOC als null) – bleibt bis zum nächsten erfolgreichen Abruf |
 | ⬛ Aus | Nachts (Sonnenaufgang −30 min bis Sonnenuntergang +30 min) |
 
 Beim Start rotiert eine blaue LED, bis die WLAN-Verbindung steht.
@@ -169,6 +169,7 @@ Beispielantwort (gekürzt):
 | Problem | Lösung |
 |---|---|
 | Ring bleibt dunkel | DIP-Schalter prüfen: genau ein Schalter ON, passend zum Pad der Datenleitung! Danach Verkabelung prüfen (häufigster Fehler: 5V/GND vertauscht), 5V am Ring messen |
+| Ring dunkel, obwohl Tag und Verkabelung ok | SolarWeb hat SOC/P_Grid als null geliefert (passiert z. B. beim Umschalten nahe 100 % Batterieladung). Der Sketch zeigt das als rote Fehler-LED; beim nächsten gültigen Abruf kommt die Anzeige zurück |
 | Eine rote LED leuchtet | WLAN-Daten/Token prüfen, Seriellen Monitor anschauen |
 | Farben passen nicht (Rot und Grün vertauscht, z. B. zeigt der Ring Rot statt Grün) | `LED_COLOR_ORDER` im Sketch auf `NEO_RGB` ändern (manche Ringe sind intern RGB statt GRB verkabelt) |
 | Erste LED blitzt beim Einschalten auf | Normal bei D4/GPIO2 (Boot-Pegel), harmlos |

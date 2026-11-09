@@ -179,10 +179,15 @@ void fetchAndDisplayData() {
       DeserializationError error = deserializeJson(doc, payload);
       
       if (!error) {
-        float p_grid = doc["P_Grid"];
-        float soc = doc["SOC"];
-        updateLeds(p_grid, soc);
-        success = true; 
+        // SOC oder P_Grid fehlen bzw. sind null (z. B. kurz vor 100 %
+        // Batterieladung beim Umschalten des Wechselrichters) -> als
+        // Fehler behandeln, statt stiller Dunkelheit anzuzeigen.
+        if (doc["SOC"].is<float>() && doc["P_Grid"].is<float>()) {
+          float p_grid = doc["P_Grid"];
+          float soc = doc["SOC"];
+          updateLeds(p_grid, soc);
+          success = true;
+        }
       }
     }
     https.end();
