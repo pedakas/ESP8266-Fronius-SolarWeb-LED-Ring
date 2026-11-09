@@ -13,7 +13,7 @@
  * Funktion:
  *   - Ruft alle 4 Minuten die Solar.web Public-Display-API ab
  *   - Gruen: >1 kW Einspeisung UND Batterie >= 98 %
- *   - Blau/Orange/Rot: Batterieladestand (jede LED ~8,3 %)
+ *   - Blau/Gelb/Orange/Rot: Batterieladestand in Vierteln (je 3 LEDs)
  *   - Eine rote LED: Fehler (WLAN oder API)
  *   - Nachts automatisch aus (Offsets einstellbar; IMMER_AN=1 deaktiviert die Automatik)
  *   - Updates kabellos per OTA (Hostname: siehe HOSTNAME im Sketch)
@@ -249,13 +249,16 @@ void updateLeds(float grid, float soc) {
     int activeLeds = round((soc / 100.0) * NUM_LEDS);
     if (activeLeds > NUM_LEDS) activeLeds = NUM_LEDS;
     
+    // 4 Zonen à 3 LEDs (= Viertel des Ladestands)
     uint32_t batColor;
-    if (soc <= 30.0) {
-      batColor = ring.Color(255, 0, 0);     
-    } else if (soc <= 70.0) {
-      batColor = ring.Color(255, 120, 0);   
+    if (soc <= 25.0) {
+      batColor = ring.Color(255, 0, 0);      // Rot:    0-25 %
+    } else if (soc <= 50.0) {
+      batColor = ring.Color(255, 120, 0);   // Orange: 25-50 %
+    } else if (soc <= 75.0) {
+      batColor = ring.Color(255, 255, 0);   // Gelb:   50-75 %
     } else {
-      batColor = ring.Color(0, 0, 255);     
+      batColor = ring.Color(0, 0, 255);     // Blau:   75-100 %
     }
     
     for(int i = 0; i < activeLeds; i++) {

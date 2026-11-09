@@ -9,9 +9,10 @@ Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die
 | Anzeige | Bedeutung |
 |---|---|
 | 🟩 Alle 12 LEDs grün | Mehr als 1 kW Einspeisung ins Netz **und** Batterie ≥ 98 % |
-| 🟦 1–12 LEDs blau | Batterieladestand (jede LED ≈ 8,3 %), Bereich 71–100 % |
-| 🟧 LEDs orange | Batterieladestand, Bereich 31–70 % |
-| 🟥 LEDs rot | Batterieladestand ≤ 30 % |
+| 🟦 LEDs blau | Batterieladestand 75–100 % (3 LEDs pro Viertel, jede LED ≈ 8,3 %) |
+| 🟨 LEDs gelb | Batterieladestand 50–75 % |
+| 🟧 LEDs orange | Batterieladestand 25–50 % |
+| 🟥 LEDs rot | Batterieladestand ≤ 25 % |
 | 🟥 Eine einzelne LED | Fehler: kein WLAN, API-/JSON-Fehler oder unvollständige Daten (z. B. SolarWeb liefert SOC als null) – bleibt bis zum nächsten erfolgreichen Abruf |
 | ⬛ Aus | Nachts: von `MORGEN_OFFSET_MIN` vor Sonnenaufgang bis `ABEND_OFFSET_MIN` nach Sonnenuntergang (Standard: aus mit Sonnenuntergang). Lässt sich per `IMMER_AN 1` deaktivieren |
 
