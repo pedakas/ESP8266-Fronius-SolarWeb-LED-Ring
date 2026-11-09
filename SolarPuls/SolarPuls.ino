@@ -102,12 +102,11 @@ void setup() {
     delay(200);
   }
   
-  // Zeit per NTP holen. WICHTIG: Sommerzeit automatisch ueber TZ_RULE.
-  // (Die alte Variante mit zwei festen Offsets lief im Winter genau
-  //  eine Stunde vor, dadurch schaltete die Ampel zu frueh auf Nacht.)
-  setenv("TZ", TZ_RULE, 1);
-  tzset();
-  configTime(ntpServer);
+  // Zeit per NTP holen. WICHTIG: Sommerzeit automatisch ueber TZ_RULE
+  // statt zwei fester Offsets (die alte Variante lief im Winter genau
+  // eine Stunde vor, dadurch schaltete die Ampel zu frueh auf Nacht).
+  // Signatur ab ESP8266-Core 3.x: configTime(tzRegel, ntpServer, ...)
+  configTime(TZ_RULE, ntpServer);
   
   ArduinoOTA.setHostname("solarpuls"); 
   ArduinoOTA.begin();
