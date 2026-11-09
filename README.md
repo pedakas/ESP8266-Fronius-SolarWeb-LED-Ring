@@ -115,6 +115,7 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 - **Standort:** `latitude`/`longitude` des Anlagenstandorts (z. B. aus Google Maps: rechter Klick → Koordinaten kopieren).
 - **Zeitzone:** `timeZone` als **Standardzeit ohne Sommerzeit** eintragen (Österreich/Deutschland: `1`). Für die Uhrzeit selbst sorgt `TZ_RULE` (Mitteleuropa mit automatischer Sommerzeitumstellung) – für andere Regionen den POSIX-TZ-String aus der [POSIX-TZ-Datenbank](https://github.com/nayarsystems/posix_tz_db) eintragen.
 - **Anzeige-Zeiten:** `MORGEN_OFFSET_MIN` = Minuten vor Sonnenaufgang einschalten, `ABEND_OFFSET_MIN` = Minuten nach Sonnenuntergang ausschalten. `0` = exakt mit dem Sonnenereignis.
+- **Hostname:** `HOSTNAME` ist der Gerätename im Netzwerk (Router-Anzeige, OTA in der IDE, Web-OTA-URL). Bei **mehreren SolarPuls-Geräten im selben WLAN** braucht jedes einen eindeutigen Namen: pro Gerät anpassen (`solarpuls-2`, …) oder `HOSTNAME_MAC_SUFFIX` auf `1` stellen – dann hängt der Sketch automatisch die Chip-ID (letzte 6 MAC-Stellen) als Suffix an, z. B. `solarpuls-24f2ab`.
 - **Ausrichtung:** `LED_OFFSET` dreht den Startpunkt der Prozentanzeige (Wert 0–11), falls die erste LED des Rings an einer ungünstigen Stelle sitzt. `0` = Start bei der physisch ersten LED (direkt am Daten-Eingang).
 - **Farbreihenfolge:** `LED_COLOR_ORDER` ist standardmäßig `NEO_GRB` (WS2812B-Standard). Zeigt der Ring Rot statt Grün, auf `NEO_RGB` ändern (manche Ringe sind intern anders verkabelt).
 
@@ -130,11 +131,11 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 
 ## 📶 Updates per OTA (kabellos)
 
-**Variante 1 – Arduino IDE:** Nach dem ersten USB-Flash erscheint das Gerät als **„SolarPuls“** in der IDE unter **Werkzeuge → Port** (Abschnitt Netzwerk-Ports). Updates laufen dann direkt aus der IDE über WLAN.
+**Variante 1 – Arduino IDE:** Nach dem ersten USB-Flash erscheint das Gerät unter seinem **`HOSTNAME`** (Standard: `solarpuls`) in der IDE unter **Werkzeuge → Port** (Abschnitt Netzwerk-Ports). Updates laufen dann direkt aus der IDE über WLAN.
 
 **Variante 2 – Browser (Web-OTA):** Der Sketch bietet zusätzlich eine Update-Seite an, die parallel zur IDE-Variante läuft:
 
-1. `http://solarpuls.local/update` im Browser öffnen (alternativ die IP des Geräts, im Router nachschauen)
+1. `http://<HOSTNAME>.local/update` im Browser öffnen (Standard: `solarpuls.local`; alternativ die IP des Geräts, im Router nachschauen)
 2. Mit Benutzer/Passwort aus dem Sketch anmelden (`otaWebUser` / `otaWebPassword` – **bitte ändern!**)
 3. In der Arduino IDE: **Sketch → Binärdatei exportieren (Export Compiled Binary)** – die erzeugte `.bin`-Datei auf der Update-Seite auswählen und hochladen
 4. Das Gerät flasht sich selbst, startet neu und läuft mit der neuen Firmware weiter

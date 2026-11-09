@@ -16,7 +16,7 @@
  *   - Blau/Orange/Rot: Batterieladestand (jede LED ~8,3 %)
  *   - Eine rote LED: Fehler (WLAN oder API)
  *   - Nachts automatisch aus (Offsets fuer An-/Ausschalten einstellbar)
- *   - Updates kabellos per OTA (Hostname: "solarpuls")
+ *   - Updates kabellos per OTA (Hostname: siehe HOSTNAME im Sketch)
  *
  * Benoetigt: Adafruit NeoPixel, ArduinoJson 7.x, Dusk2Dawn
  * Board: LOLIN(WEMOS) D1 R1 & mini
@@ -39,7 +39,7 @@
 const char* ssid = "DEIN_WLAN_NAME";
 const char* password = "DEIN_WLAN_PASSWORT";
 
-// Zugangsdaten fuer die Web-OTA-Seite (http://solarpuls.local/update)
+// Zugangsdaten fuer die Web-OTA-Seite (http://<HOSTNAME>.local/update)
 // BITTE UNBEDINGT AENDERN, sonst kann jeder im Netzwerk flashen!
 const char* otaWebUser = "admin";
 const char* otaWebPassword = "BITTE_AENDERN";
@@ -66,6 +66,13 @@ int timeZone = 1;
 // Anzeige-Zeiten: Minuten relativ zum Sonnenauf-/-untergang
 #define MORGEN_OFFSET_MIN 30   // Einschalten: so viele Minuten VOR Sonnenaufgang
 #define ABEND_OFFSET_MIN 0     // Ausschalten: so viele Minuten NACH Sonnenuntergang (0 = mit Sonnenuntergang)
+
+// Geraetename im Netzwerk (Router-Anzeige, OTA in der IDE, Web-OTA-URL)
+// Bei MEHREREN SolarPuls-Geraeten im selben WLAN muss jedes einen
+// EINDEUTIGEN Namen haben: pro Geraet anpassen (z. B. "solarpuls-2")
+// oder HOSTNAME_MAC_SUFFIX auf 1 stellen.
+#define HOSTNAME "solarpuls"
+#define HOSTNAME_MAC_SUFFIX 0  // 1 = automatisch Chip-ID/MAC-Suffix anhaengen (z. B. solarpuls-24f2ab)
 
 Dusk2Dawn standort(latitude, longitude, timeZone);
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, LED_COLOR_ORDER + NEO_KHZ800);
@@ -95,6 +102,15 @@ void setup() {
   ring.setBrightness(BRIGHTNESS);
   ring.show(); 
   
+  // Eindeutigen Geraetenamen setzen (Router-Anzeige, mDNS, OTA)
+  char hostname[32];
+#if HOSTNAME_MAC_SUFFIX
+  snprintf(hostname, sizeof(hostname), HOSTNAME "-%06X", ESP.getChipId());
+#else
+  snprintf(hostname, sizeof(hostname), "%s", HOSTNAME);
+#endif
+  WiFi.hostname(hostname);   // Name, den der Router anzeigt
+  
   WiFi.begin(ssid, password);
   
   int loadingPos = 0;
@@ -112,10 +128,10 @@ void setup() {
   // Signatur ab ESP8266-Core 3.x: configTime(tzRegel, ntpServer, ...)
   configTime(TZ_RULE, ntpServer);
   
-  ArduinoOTA.setHostname("solarpuls"); 
+  ArduinoOTA.setHostname(hostname);   // OTA-/mDNS-Name -> http://<HOSTNAME>.local/update 
   ArduinoOTA.begin();
   
-  // Web-OTA: Update-Seite unter http://solarpuls.local/update
+  // Web-OTA: Update-Seite unter http://<HOSTNAME>.local/update
   // (Basic-Auth mit den Zugangsdaten oben; MDNS laeuft ueber ArduinoOTA)
   httpUpdater.setup(&httpServer, "/update", otaWebUser, otaWebPassword);
   httpServer.begin();
