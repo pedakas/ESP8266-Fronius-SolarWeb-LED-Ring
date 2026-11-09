@@ -13,7 +13,7 @@ Ein kleines IoT-Projekt: Ein **Wemos D1 Mini (ESP8266)** holt alle 4 Minuten die
 | 🟧 LEDs orange | Batterieladestand, Bereich 31–70 % |
 | 🟥 LEDs rot | Batterieladestand ≤ 30 % |
 | 🟥 Eine einzelne LED | Fehler: kein WLAN, API-/JSON-Fehler oder unvollständige Daten (z. B. SolarWeb liefert SOC als null) – bleibt bis zum nächsten erfolgreichen Abruf |
-| ⬛ Aus | Nachts: von `MORGEN_OFFSET_MIN` vor Sonnenaufgang bis `ABEND_OFFSET_MIN` nach Sonnenuntergang (Standard: aus mit Sonnenuntergang) |
+| ⬛ Aus | Nachts: von `MORGEN_OFFSET_MIN` vor Sonnenaufgang bis `ABEND_OFFSET_MIN` nach Sonnenuntergang (Standard: aus mit Sonnenuntergang). Lässt sich per `IMMER_AN 1` deaktivieren |
 
 Beim Start rotiert eine blaue LED, bis die WLAN-Verbindung steht.
 
@@ -115,6 +115,7 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 - **Standort:** `latitude`/`longitude` des Anlagenstandorts (z. B. aus Google Maps: rechter Klick → Koordinaten kopieren).
 - **Zeitzone:** `timeZone` als **Standardzeit ohne Sommerzeit** eintragen (Österreich/Deutschland: `1`). Für die Uhrzeit selbst sorgt `TZ_RULE` (Mitteleuropa mit automatischer Sommerzeitumstellung) – für andere Regionen den POSIX-TZ-String aus der [POSIX-TZ-Datenbank](https://github.com/nayarsystems/posix_tz_db) eintragen.
 - **Anzeige-Zeiten:** `MORGEN_OFFSET_MIN` = Minuten vor Sonnenaufgang einschalten, `ABEND_OFFSET_MIN` = Minuten nach Sonnenuntergang ausschalten. `0` = exakt mit dem Sonnenereignis.
+- **Testmodus:** `IMMER_AN` auf `1` stellen, um die Tag/Nacht-Automatik komplett zu deaktivieren – die Anzeige läuft dann rund um die Uhr. Nach dem Testen zurück auf `0` setzen und neu flashen.
 - **Hostname:** `HOSTNAME` ist der Gerätename im Netzwerk (Router-Anzeige, OTA in der IDE, Web-OTA-URL). Bei **mehreren SolarPuls-Geräten im selben WLAN** braucht jedes einen eindeutigen Namen: pro Gerät anpassen (`solarpuls-2`, …) oder `HOSTNAME_MAC_SUFFIX` auf `1` stellen – dann hängt der Sketch automatisch die Chip-ID (letzte 6 MAC-Stellen) als Suffix an, z. B. `solarpuls-24f2ab`.
 - **Fehler-Retry:** Nach einem fehlgeschlagenen Abruf (Fehler-LED) versucht es das Gerät nach **1 Minute** erneut (`timerDelayRetry`), statt 4 Minuten zu warten. Bei Erfolg kehrt es zum normalen Intervall (`timerDelay`) zurück.
 - **Ausrichtung:** `LED_OFFSET` dreht den Startpunkt der Prozentanzeige (Wert 0–11), falls die erste LED des Rings an einer ungünstigen Stelle sitzt. `0` = Start bei der physisch ersten LED (direkt am Daten-Eingang).

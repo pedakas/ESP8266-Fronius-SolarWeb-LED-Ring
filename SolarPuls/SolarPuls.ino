@@ -15,7 +15,7 @@
  *   - Gruen: >1 kW Einspeisung UND Batterie >= 98 %
  *   - Blau/Orange/Rot: Batterieladestand (jede LED ~8,3 %)
  *   - Eine rote LED: Fehler (WLAN oder API)
- *   - Nachts automatisch aus (Offsets fuer An-/Ausschalten einstellbar)
+ *   - Nachts automatisch aus (Offsets einstellbar; IMMER_AN=1 deaktiviert die Automatik)
  *   - Updates kabellos per OTA (Hostname: siehe HOSTNAME im Sketch)
  *
  * Benoetigt: Adafruit NeoPixel, ArduinoJson 7.x, Dusk2Dawn
@@ -66,6 +66,7 @@ int timeZone = 1;
 // Anzeige-Zeiten: Minuten relativ zum Sonnenauf-/-untergang
 #define MORGEN_OFFSET_MIN 30   // Einschalten: so viele Minuten VOR Sonnenaufgang
 #define ABEND_OFFSET_MIN 0     // Ausschalten: so viele Minuten NACH Sonnenuntergang (0 = mit Sonnenuntergang)
+#define IMMER_AN 0             // 1 = Tag/Nacht-Automatik deaktivieren: Anzeige rund um die Uhr an
 
 // Geraetename im Netzwerk (Router-Anzeige, OTA in der IDE, Web-OTA-URL)
 // Bei MEHREREN SolarPuls-Geraeten im selben WLAN muss jedes einen
@@ -171,6 +172,12 @@ void loop() {
 
 // Tag/Nacht-Erkennung per NTP-Zeit und Sonnenauf-/untergang
 bool isDaytime() {
+#if IMMER_AN
+  // Testmodus (IMMER_AN=1): immer "Tag" melden, die Automatik ist
+  // deaktiviert und die Anzeige laeuft rund um die Uhr.
+  // Bei IMMER_AN=0 wird dieser Zweig gar nicht erst kompiliert.
+  return true;
+#endif
   time_t now = time(nullptr);
   struct tm timeinfo;
   localtime_r(&now, &timeinfo);
