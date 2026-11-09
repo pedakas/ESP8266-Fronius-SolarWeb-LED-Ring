@@ -102,7 +102,7 @@ Arduino IDE 2.x von [arduino.cc](https://www.arduino.cc/en/software) herunterlad
 
 ## ⚙️ Konfiguration
 
-Im Sketch (`solar_ampel/solar_ampel.ino`) oben eintragen:
+Im Sketch (`SolarPuls/SolarPuls.ino`) oben eintragen:
 
 ```cpp
 const char* ssid = "DEIN_WLAN_NAME";
@@ -180,8 +180,8 @@ Beispielantwort (gekürzt):
 ```
 ├── README.md                 Diese Anleitung
 ├── LICENSE                   MIT-Lizenz
-└── solar_ampel/
-    └── solar_ampel.ino       Der Sketch
+└── SolarPuls/
+    └── SolarPuls.ino         Der Sketch
 ```
 
 ## 📄 Lizenz
