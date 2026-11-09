@@ -168,7 +168,7 @@ Beispielantwort (gekürzt):
 |---|---|
 | Ring bleibt dunkel | DIP-Schalter prüfen: genau ein Schalter ON, passend zum Pad der Datenleitung! Danach Verkabelung prüfen (häufigster Fehler: 5V/GND vertauscht), 5V am Ring messen |
 | Eine rote LED leuchtet | WLAN-Daten/Token prüfen, Seriellen Monitor anschauen |
-| Farben passen nicht (R/B vertauscht) | Im Sketch `NEO_GRB` gegen `NEO_RGB` tauschen |
+| Farben passen nicht (Rot und Grün vertauscht, z. B. zeigt der Ring Rot statt Grün) | Im Sketch `NEO_GRB` gegen `NEO_RGB` tauschen (manche Ringe sind intern RGB statt GRB verkabelt) |
 | Erste LED blitzt beim Einschalten auf | Normal bei D4/GPIO2 (Boot-Pegel), harmlos |
 | Ring flackert dauerhaft | Datenleitung kürzen oder Level-Shifter (74AHCT125) verwenden |
 | Kompilierfehler: `Dusk2Dawn ... cannot declare member function ... to have static linkage` | Bekannter Bug der Dusk2Dawn-Bibliothek mit neueren Compilern. In `Dokumente\Arduino\libraries\Dusk2Dawn\Dusk2Dawn.cpp` das Wort `static` in den beiden Funktions-Definitionen (`min2str`, `zeroPadTime`) löschen, IDE neu starten |
