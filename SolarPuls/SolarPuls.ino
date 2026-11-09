@@ -61,9 +61,10 @@ int timeZone = 1;
 #define NUM_LEDS 12      // Der X-Ring hat 12 LEDs
 #define BRIGHTNESS 50    
 #define LED_OFFSET 0     // Startpunkt der Anzeige drehen (0-11): 0 = erste LED am Daten-Eingang
+#define LED_COLOR_ORDER NEO_GRB  // NEO_GRB = Standard (WS2812B); auf NEO_RGB aendern, falls Rot/Gruen vertauscht erscheinen
 
 Dusk2Dawn standort(latitude, longitude, timeZone);
-Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel ring = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, LED_COLOR_ORDER + NEO_KHZ800);
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;

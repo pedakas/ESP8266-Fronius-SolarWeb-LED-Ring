@@ -115,6 +115,7 @@ const char* publicDisplayUrl = "https://www.solarweb.com/ActualData/GetCompareDa
 - **Standort:** `latitude`/`longitude` des Anlagenstandorts (z. B. aus Google Maps: rechter Klick → Koordinaten kopieren).
 - **Zeitzone:** `timeZone` als **Standardzeit ohne Sommerzeit** eintragen (Österreich/Deutschland: `1`).
 - **Ausrichtung:** `LED_OFFSET` dreht den Startpunkt der Prozentanzeige (Wert 0–11), falls die erste LED des Rings an einer ungünstigen Stelle sitzt. `0` = Start bei der physisch ersten LED (direkt am Daten-Eingang).
+- **Farbreihenfolge:** `LED_COLOR_ORDER` ist standardmäßig `NEO_GRB` (WS2812B-Standard). Zeigt der Ring Rot statt Grün, auf `NEO_RGB` ändern (manche Ringe sind intern anders verkabelt).
 
 ---
 
@@ -169,7 +170,7 @@ Beispielantwort (gekürzt):
 |---|---|
 | Ring bleibt dunkel | DIP-Schalter prüfen: genau ein Schalter ON, passend zum Pad der Datenleitung! Danach Verkabelung prüfen (häufigster Fehler: 5V/GND vertauscht), 5V am Ring messen |
 | Eine rote LED leuchtet | WLAN-Daten/Token prüfen, Seriellen Monitor anschauen |
-| Farben passen nicht (Rot und Grün vertauscht, z. B. zeigt der Ring Rot statt Grün) | Im Sketch `NEO_GRB` gegen `NEO_RGB` tauschen (manche Ringe sind intern RGB statt GRB verkabelt) |
+| Farben passen nicht (Rot und Grün vertauscht, z. B. zeigt der Ring Rot statt Grün) | `LED_COLOR_ORDER` im Sketch auf `NEO_RGB` ändern (manche Ringe sind intern RGB statt GRB verkabelt) |
 | Erste LED blitzt beim Einschalten auf | Normal bei D4/GPIO2 (Boot-Pegel), harmlos |
 | Ring flackert dauerhaft | Datenleitung kürzen oder Level-Shifter (74AHCT125) verwenden |
 | Kompilierfehler: `Dusk2Dawn ... cannot declare member function ... to have static linkage` | Bekannter Bug der Dusk2Dawn-Bibliothek mit neueren Compilern. In `Dokumente\Arduino\libraries\Dusk2Dawn\Dusk2Dawn.cpp` das Wort `static` in den beiden Funktions-Definitionen (`min2str`, `zeroPadTime`) löschen, IDE neu starten |
