@@ -83,7 +83,9 @@ const char* ntpServer = "pool.ntp.org";
 const char* TZ_RULE = "CET-1CEST,M3.5.0/02,M10.5.0/03";
 
 unsigned long lastTime = 0;
-const unsigned long timerDelay = 240000; // 4 Minuten
+const unsigned long timerDelay = 240000;       // 4 Minuten: Normalfall
+const unsigned long timerDelayRetry = 60000;  // 1 Minute: schneller Retry nach Fehler
+bool letzterAbrufFehlerhaft = false;          // steuert das Retry-Intervall
 
 // Web-OTA (lauft parallel zum klassischen ArduinoOTA)
 ESP8266WebServer httpServer(80);
@@ -140,7 +142,7 @@ void setup() {
   ring.show();
   
   if (isDaytime()) {
-    fetchAndDisplayData();
+    letzterAbrufFehlerhaft = !fetchAndDisplayData();
   }
 }
 
@@ -148,16 +150,20 @@ void loop() {
   ArduinoOTA.handle();
   httpServer.handleClient();   // Web-OTA: Browser-Anfragen bedienen
   
-  if ((millis() - lastTime) > timerDelay) {
+  // Nach einem Fehlerhaften Abruf oefter versuchen (1 Minute),
+  // sonst im normalen Intervall (4 Minuten).
+  if ((millis() - lastTime) > (letzterAbrufFehlerhaft ? timerDelayRetry : timerDelay)) {
     if (isDaytime()) {
       if (WiFi.status() == WL_CONNECTED) {
-        fetchAndDisplayData();
+        letzterAbrufFehlerhaft = !fetchAndDisplayData();
       } else {
         showOfflineError();
+        letzterAbrufFehlerhaft = true;
       }
     } else {
       ring.clear();
       ring.show();
+      letzterAbrufFehlerhaft = false; // nachts kein Retry-Stau
     }
     lastTime = millis();
   }
@@ -190,7 +196,7 @@ void showOfflineError() {
   ring.show();
 }
 
-void fetchAndDisplayData() {
+bool fetchAndDisplayData() {
   WiFiClientSecure client;
   client.setInsecure(); 
   HTTPClient https;
@@ -221,6 +227,7 @@ void fetchAndDisplayData() {
   if (!success) {
     showOfflineError();
   }
+  return success;
 }
 
 void updateLeds(float grid, float soc) {
